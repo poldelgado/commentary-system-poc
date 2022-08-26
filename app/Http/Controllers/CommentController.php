@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreMessageRequest;
+use App\Http\Requests\StoreCommentRequest;
 use Illuminate\Http\Request;
+use App\Models\Comment;
 
 class CommentController extends Controller
 {
@@ -14,7 +15,9 @@ class CommentController extends Controller
      */
     public function index()
     {
-        //
+        return Comment::orderBy('created_at','DESC')
+                    ->with('replies')
+                    ->get();
     }
 
     /**
@@ -23,9 +26,18 @@ class CommentController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreMessageRequest $request)
+    public function store(StoreCommentRequest $request, $parent_id=null)
     {
+        $comment = Comment::create([
+            'username' => $request->username,
+            'comment' => $request->comment,
+            //'parent_id',
+        ]);
 
+        return response()->json([
+            'data' => $comment,
+            'message' => 'Comment saved',
+        ], 201);
     }
 
     /**

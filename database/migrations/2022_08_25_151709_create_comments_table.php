@@ -19,8 +19,9 @@ return new class extends Migration
             $table->text('comment');
             $table->foreignId('parent_id')
                 ->nullable()
-                ->constrained('comments');
-            $table->integer('depth');
+                ->constrained('comments')
+                ->cascadeOnDelete();
+            $table->integer('depth')->default(0);
             $table->timestamps();
         });
     }

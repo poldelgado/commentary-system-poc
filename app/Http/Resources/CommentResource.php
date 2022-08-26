@@ -22,6 +22,7 @@ class CommentResource extends JsonResource
             'depth' => $this->depth,
             'replies' => $this->depth < 3 ? $this::collection($this->whenLoaded('replies')):[],
             'created_at' => $this->created_at->format('F jS, Y - h:i'),
+            'last_level_reply' => $this->last_level_reply,
         ];
     }
 }

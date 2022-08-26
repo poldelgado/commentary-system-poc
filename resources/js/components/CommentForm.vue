@@ -5,16 +5,25 @@
             <div class="d-flex flex-row add-comment-section mt-4 mb-4">
                 <input type="text"
                     class="form-control mr-3"
+                    :class="invalidInputClass('username')"
                     placeholder="Username"
                     v-model="formInputs.username"
                     />
             </div>
+            <div v-if="isErrors('username')" class="d-flex flex-row add-comment-section mt-4 mb-4">
+                    {{errors.username}}
+            </div>
             <div class="d-flex flex-row add-comment-section mt-4 mb-4">
                 <textarea
                     class="form-control"
+                    :class="invalidInputClass('comment')"
                     placeholder="Add your comment"
                     v-model="formInputs.comment"
+
                 ></textarea>
+            </div>
+            <div v-if="isErrors('comment')" class="d-flex flex-row add-comment-section mt-4 mb-4">
+                {{errors.comment}}
             </div>
             <div class="d-flex flex-row add-comment-section mt-4 mb-4">
                 <button class="btn btn-primary ml-5" type="submit">{{buttonText}}</button>
@@ -36,6 +45,7 @@ export default {
                 username: null,
                 comment: null,
             },
+            errors: {},
         };
     },
     computed: {
@@ -63,12 +73,27 @@ export default {
                     } else {
                         this.addComment(response.data.comment);
                     }
-                });
+                })
+                .catch(error => {
+                        console.log("error!");
+                        console.log(error.response.data.errors);
+                        this.errors = error.response.data.errors;
+                    });
+        },
+        invalidInputClass(input) {
+            if (this.isErrors(input)) {
+                return 'is-invalid red';
+            }
+            return '';
+        },
+        isErrors(input) {
+            return this.errors.hasOwnProperty(input);
         },
         cleanFields()
         {
             this.formInputs.username = null;
             this.formInputs.comment = null;
+            this.errors = {};
         },
         addComment(comment) {
             this.$root.comments.unshift(comment);
@@ -79,3 +104,8 @@ export default {
     }
 }
 </script>
+<style scoped>
+    .error {
+        color: red;
+    }
+</style>

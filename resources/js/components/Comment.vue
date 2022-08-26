@@ -10,7 +10,7 @@
             <div
                 class="reply-section">
                 <div class="align-items-center">
-                    <button v-if="comment.depth < 3"
+                    <button v-if="!comment.last_level_reply"
                         class="btn btn-sm btn btn-outline-primary ml-3 mt-1"
                         @click.prevent="reply">
                         Reply

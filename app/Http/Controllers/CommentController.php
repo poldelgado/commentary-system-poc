@@ -42,7 +42,11 @@ class CommentController extends Controller
             'message' => 'Comment saved',
         ], 201);
     }
-
+    /**
+     * Store a new comment's reply
+     * @param \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
     public function reply(StoreReplyCommentRequest $request)
     {
         $reply = Comment::create([

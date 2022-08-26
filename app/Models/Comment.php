@@ -13,6 +13,7 @@ class Comment extends Model
     const MAX_LEVEL_COMMENTS = 3;
 
     protected $fillable = [
+        'username',
         'comment',
         'parent_id',
         'depth',

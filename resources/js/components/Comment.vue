@@ -1,14 +1,28 @@
 <template>
-    <div class="commented-section mt-2">
-        <div class="d-flex flex-row align-items-center commented-user">
-            <h5 class="mr-2">{{comment.username}}</h5><span class="dot mb-1"></span>
-        </div>
-        <div class="comment-text-sm"><span>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</span></div>
-        <div
-            class="reply-section">
-            <div class="d-flex flex-row align-items-center">
-                <button class="btn btn-sm btn btn-outline-primary ml-3 mt-1">Reply</button>
+    <div class="row">
+        <div class="commented-section mt-2">
+            <div class="align-items-center commented-user">
+                <h5 class="mr-2">{{comment.username}}</h5>{{comment.created_at}}
             </div>
+            <div class="comment-text-sm">
+                <span>{{comment.comment}}</span>
+            </div>
+            <div
+                class="reply-section">
+                <div class="align-items-center">
+                    <button v-if="comment.depth < 3"
+                        class="btn btn-sm btn btn-outline-primary ml-3 mt-1"
+                        @click.prevent="reply">
+                        Reply
+                    </button>
+                    <div v-if="comment.replies" class="replies">
+                        <template v-for="replie in comment.replies" :key="replie.id">
+                            <Comment :comment="replie" />
+                        </template>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 </template>
@@ -22,8 +36,13 @@ export default {
     },
     methods: {
         reply() {
-            console.log("reply a comment");
+            this.$root.showModal(this.comment)
         }
     },
 }
 </script>
+<style scoped>
+    .replies {
+        margin-left: 4em;
+    }
+</style>

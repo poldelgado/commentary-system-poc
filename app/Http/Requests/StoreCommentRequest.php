@@ -26,7 +26,6 @@ class StoreCommentRequest extends FormRequest
         return [
             'username' => 'required|string',
             'comment' => 'required|min:20',
-            'parent_id' => 'nullable',
         ];
     }
 }

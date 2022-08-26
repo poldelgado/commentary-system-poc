@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreCommentRequest;
+use App\Http\Requests\StoreReplyCommentRequest;
 use Illuminate\Http\Request;
 use App\Models\Comment;
+use App\Http\Resources\CommentResource;
 
 class CommentController extends Controller
 {
@@ -15,9 +17,10 @@ class CommentController extends Controller
      */
     public function index()
     {
-        return Comment::orderBy('created_at','DESC')
-                    ->with('replies')
-                    ->get();
+        return CommentResource::collection(Comment::where('depth',0)
+        ->with('replies')
+        ->orderBy('created_at','DESC')
+        ->get());
     }
 
     /**
@@ -35,8 +38,23 @@ class CommentController extends Controller
         ]);
 
         return response()->json([
-            'data' => $comment,
+            'comment' => CommentResource::make($comment),
             'message' => 'Comment saved',
+        ], 201);
+    }
+
+    public function reply(StoreReplyCommentRequest $request)
+    {
+        $reply = Comment::create([
+            'username' => $request->username,
+            'comment' => $request->comment,
+            'parent_id' => $request->parent_id,
+            'depth' => $request->depth,
+        ]);
+
+        return response()->json([
+            'reply' => CommentResource::make($reply),
+            'message' => 'Reply saved',
         ], 201);
     }
 

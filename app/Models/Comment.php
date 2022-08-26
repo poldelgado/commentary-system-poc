@@ -30,10 +30,10 @@ class Comment extends Model
 
     public function replies(): HasMany
     {
-        return $this->hasMany(self::class,'parent_id');
+        return $this->hasMany(self::class,'parent_id')->orderBy('created_at','DESC');
     }
 
-    public function depth()
+    public function depthAvailable()
     {
         return $this->depth >= self::MAX_LEVEL_COMMENTS - 1;
     }

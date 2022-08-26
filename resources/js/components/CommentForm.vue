@@ -17,18 +17,16 @@
                 ></textarea>
             </div>
             <div class="d-flex flex-row add-comment-section mt-4 mb-4">
-                <button class="btn btn-primary ml-5" type="submit">Comment</button>
+                <button class="btn btn-primary ml-5" type="submit">{{buttonText}}</button>
             </div>
         </form>
     </div>
 </template>
 <script>
-import axios from 'axios';
-
 export default {
     props: {
-        parent_id: {
-            type: Number,
+        parent_comment: {
+            type: Object,
             required: false,
         }
     },
@@ -40,27 +38,43 @@ export default {
             },
         };
     },
+    computed: {
+        buttonText() {
+            return !this.parent_comment ? 'Add Comment':'Add Repply'
+        }
+    },
     methods: {
         submit() {
-            const url=baseURL+'/api/comment';
+            let url=baseURL+'/api/comment';
             let formData = new FormData();
             formData.append('username',this.formInputs.username);
             formData.append('comment',this.formInputs.comment);
+            if (this.parent_comment) {
+                formData.append('depth',this.parent_comment.depth+1);
+                formData.append('parent_id',this.parent_comment.id);
+                url = url+'/reply';
+            }
             axios.post(url, formData)
                 .then(response => {
-                    console.log(response);
                     this.cleanFields();
-                    this.addComment();
-                })
-            console.log("submit form");
+                    if (this.parent_comment) {
+                        this.addRepply(response.data.reply);
+                        this.$root.hideModal();
+                    } else {
+                        this.addComment(response.data.comment);
+                    }
+                });
         },
         cleanFields()
         {
             this.formInputs.username = null;
             this.formInputs.comment = null;
         },
-        addComment() {
-            console.log('will shift new comment');
+        addComment(comment) {
+            this.$root.comments.unshift(comment);
+        },
+        addRepply(comment) {
+            this.$root.selectedComment.replies.unshift(comment);
         }
     }
 }

@@ -23,8 +23,11 @@
                 <div v-for="comment in comments" :key="comment.id">
                     <Comment :comment="comment" />
                 </div>
-                <modal-reply idmodal="modalreply" title="Repply Comment">
-                    <CommentForm />
+                <modal-reply
+                    idmodal="modalreply"
+                    title="Repply Comment"
+                    ref="modalReply">
+                    <CommentForm :parent_comment="selectedComment"/>
                 </modal-reply>
             </div>
         </div>
@@ -43,37 +46,45 @@ export default {
     data() {
         return {
             selectedComment: null,
-            comments: [
-                {
-                    id: 1,
-                    comment: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua..',
-                    username: 'poldelgado',
-                    depth: 0,
-                    replies: [],
-                },
-                {
-                    id: 2,
-                    comment: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua..',
-                    username: 'solepetrino',
-                    depth: 0,
-                    replies: [],
-                },
-                {
-                    id: 2,
-                    comment: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua..',
-                    username: 'jperez',
-                    depth: 0,
-                    replies: [],
-                },
-                {
-                    id: 2,
-                    comment: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua..',
-                    username: 'johndoe99',
-                    depth: 0,
-                    replies: [],
-                },
-            ],
+            comments: [],
         };
     },
+    methods: {
+        getComments() {
+            const url = baseURL+'/api/comment';
+            axios.get(url)
+                .then(response => {
+                    this.comments = response.data.data;
+            });
+        },
+        showModal(comment) {
+            this.selectedComment = comment;
+            this.$refs.modalReply.showModal();
+        },
+        hideModal() {
+            this.$refs.modalReply.hideModal();
+            this.selectedComment = null;
+        }
+    },
+    created() {
+        this.getComments();
+    }
 };
 </script>
+<style scoped>
+    .bdge {
+        height: 21px;
+        background-color: orange;
+        color: #fff;
+        font-size: 11px;
+        padding: 8px;
+        border-radius: 4px;
+        line-height: 3px;
+        }
+
+    .comments {
+        text-decoration: underline;
+        text-underline-position: under;
+        cursor: pointer;
+    }
+</style>

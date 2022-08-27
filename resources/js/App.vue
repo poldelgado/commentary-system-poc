@@ -51,6 +51,9 @@ export default {
         };
     },
     methods: {
+        /**
+         * Load all the comments.
+         */
         getComments() {
             const url = baseURL+'/api/comment';
             axios.get(url)
@@ -58,13 +61,20 @@ export default {
                     this.comments = response.data.data;
             });
         },
+        /**
+         * Prepare and show the modal for reply a comment
+         */
         showModal(comment) {
             this.selectedComment = comment;
             this.$refs.replyForm.cleanFields();
             this.$refs.modalReply.showModal();
         },
+        /**
+         * Hide and clean the modal for reply a comment
+         */
         hideModal() {
             this.$refs.modalReply.hideModal();
+            this.$refs.replyForm.cleanFields();
             this.selectedComment = null;
         },
     },

@@ -25,7 +25,7 @@ class StoreReplyCommentRequest extends FormRequest
     {
         return [
             'username' => 'required|string|min:5|max:20',
-            'comment' => 'required|string|min:20',
+            'comment' => 'required|string|min:10',
             'parent_id' => 'required|integer',
             'depth' => 'required|integer',
         ];

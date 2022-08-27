@@ -10,9 +10,9 @@
                     v-model="formInputs.username"
                     />
             </div>
-            <div v-if="isErrors('username')" class="d-flex flex-row add-comment-section mt-4 mb-4">
-                    {{errors.username}}
-            </div>
+            <InputError v-if="isErrors('username')"
+                :errors="errors.username"
+            />
             <div class="d-flex flex-row add-comment-section mt-4 mb-4">
                 <textarea
                     class="form-control"
@@ -22,9 +22,9 @@
 
                 ></textarea>
             </div>
-            <div v-if="isErrors('comment')" class="d-flex flex-row add-comment-section mt-4 mb-4">
-                {{errors.comment}}
-            </div>
+            <InputError v-if="isErrors('comment')"
+                :errors="errors.comment"
+            />
             <div class="d-flex flex-row add-comment-section mt-4 mb-4">
                 <button class="btn btn-primary ml-5" type="submit">{{buttonText}}</button>
             </div>
@@ -32,7 +32,11 @@
     </div>
 </template>
 <script>
+import InputError from './InputError.vue';
 export default {
+    components: {
+        InputError,
+    },
     props: {
         parent_comment: {
             type: Object,
@@ -54,6 +58,9 @@ export default {
         }
     },
     methods: {
+        /**
+         * Store the comments
+         */
         submit() {
             let url=baseURL+'/api/comment';
             let formData = new FormData();
@@ -80,32 +87,56 @@ export default {
                         this.errors = error.response.data.errors;
                     });
         },
+        /**
+         *
+         * @param {*} input
+         * Check if input property returns error
+         */
+        isErrors(input) {
+            return this.errors.hasOwnProperty(input);
+        },
+        /**
+         * @param {String} input
+         * Add bs5 error class to input
+         */
         invalidInputClass(input) {
             if (this.isErrors(input)) {
                 return 'is-invalid red';
             }
             return '';
         },
-        isErrors(input) {
-            return this.errors.hasOwnProperty(input);
+        /**
+         * Clean the Errors Object
+         */
+        cleanErrors() {
+            delete this.errors['comment'];
+            delete this.errors['username'];
         },
+        /**
+         * Clean the form inputs fields.
+         */
         cleanFields()
         {
             this.formInputs.username = null;
             this.formInputs.comment = null;
-            this.errors = {};
+            this.cleanErrors();
         },
+        /**
+         *
+         * @param {Object} comment
+         * Add a new comment to the array of comments.
+         */
         addComment(comment) {
             this.$root.comments.unshift(comment);
         },
+        /**
+         *
+         * @param {Object} comment
+         * Add a new Comment wich replies other comment.
+         */
         addRepply(comment) {
             this.$root.selectedComment.replies.unshift(comment);
         }
     }
 }
 </script>
-<style scoped>
-    .error {
-        color: red;
-    }
-</style>

@@ -27,7 +27,7 @@
                     idmodal="modalreply"
                     title="Repply Comment"
                     ref="modalReply">
-                    <CommentForm :parent_comment="selectedComment"/>
+                    <CommentForm ref="replyForm" :parent_comment="selectedComment"/>
                 </modal-reply>
             </div>
         </div>
@@ -47,6 +47,7 @@ export default {
         return {
             selectedComment: null,
             comments: [],
+            errors: {},
         };
     },
     methods: {
@@ -59,12 +60,13 @@ export default {
         },
         showModal(comment) {
             this.selectedComment = comment;
+            this.$refs.replyForm.cleanFields();
             this.$refs.modalReply.showModal();
         },
         hideModal() {
             this.$refs.modalReply.hideModal();
             this.selectedComment = null;
-        }
+        },
     },
     created() {
         this.getComments();

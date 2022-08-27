@@ -8,7 +8,7 @@
                     </div>
                     <div class="d-flex flex-column ml-3">
                         <div class="d-flex flex-row post-title">
-                            <h5>I will be in your team?</h5><span class="ml-2">(Poldelgado)</span>
+                            <h5>Will I be in your team?</h5><span class="ml-2">(Poldelgado)</span>
                         </div>
                     </div>
                 </div>

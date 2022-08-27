@@ -34,11 +34,13 @@ class CommentController extends Controller
         $comment = Comment::create([
             'username' => $request->username,
             'comment' => $request->comment,
+            'depth' => 0,
             //'parent_id',
         ]);
 
         return response()->json([
             'comment' => CommentResource::make($comment),
+            'success' => true,
             'message' => 'Comment saved',
         ], 201);
     }
@@ -58,6 +60,7 @@ class CommentController extends Controller
 
         return response()->json([
             'reply' => CommentResource::make($reply),
+            'success' => true,
             'message' => 'Reply saved',
         ], 201);
     }

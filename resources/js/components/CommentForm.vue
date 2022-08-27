@@ -15,6 +15,7 @@
             />
             <div class="d-flex flex-row add-comment-section mt-4 mb-4">
                 <textarea
+                    rows="6"
                     class="form-control"
                     :class="invalidInputClass('comment')"
                     placeholder="Add your comment"
@@ -67,25 +68,30 @@ export default {
             formData.append('username',this.formInputs.username);
             formData.append('comment',this.formInputs.comment);
             if (this.parent_comment) {
-                formData.append('depth',this.parent_comment.depth+1);
-                formData.append('parent_id',this.parent_comment.id);
+                formData.append('depth',Number(this.parent_comment.depth)+1);
+                formData.append('parent_id',parseInt(this.parent_comment.id));
                 url = url+'/reply';
+                console.log("selected comment"+this.$root.selectedComment);
             }
             axios.post(url, formData)
                 .then(response => {
-                    this.cleanFields();
-                    if (this.parent_comment) {
-                        this.addRepply(response.data.reply);
-                        this.$root.hideModal();
-                    } else {
-                        this.addComment(response.data.comment);
+                    if (response.data.success) {
+                        if (this.parent_comment) {
+                            console.log("estoy aqui!");
+                            this.addRepply(response.data.reply);
+                            this.$root.hideModal();
+                        } else {
+                            this.cleanFields();
+                            this.cleanErrors();
+                            this.addComment(response.data.comment);
+                        }
                     }
-                })
-                .catch(error => {
+                }).catch(error => {
                         console.log("error!");
+                        console.log(error);
                         console.log(error.response.data.errors);
                         this.errors = error.response.data.errors;
-                    });
+                });
         },
         /**
          *
@@ -119,7 +125,6 @@ export default {
         {
             this.formInputs.username = null;
             this.formInputs.comment = null;
-            this.cleanErrors();
         },
         /**
          *
@@ -135,7 +140,10 @@ export default {
          * Add a new Comment wich replies other comment.
          */
         addRepply(comment) {
-            this.$root.selectedComment.replies.unshift(comment);
+            if (!this.parent_comment.hasOwnProperty('replies')) {
+                this.parent_comment.replies = [];
+            }
+            this.parent_comment.replies.unshift(comment);
         }
     }
 }
